@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+* {
+    font-family: monospace;
+}
+
+.active {
+    background-color: transparent;
+    color: rgb(251, 191, 36);
+    transform: scale(1.08);
+}
+.site-hero{
+    background-image: url("./assets/images/heroBg.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: cover;
+
+}
