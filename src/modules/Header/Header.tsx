@@ -1,14 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { PATH } from "../../components";
 import { Film, Heart } from "lucide-react";
-import { useContext } from "react"; // YANGI: useContext import qilindi
-import { Context } from "../../context/Context"; // YANGI: Context import qilindi
+import { useContext } from "react";
+import { Context } from "../../context/Context";
 
 
 
 function Header() {
   const navigate = useNavigate();
-  const { likes } = useContext(Context) // YANGI: likes ro'yxatini context'dan olamiz
+  const { likes } = useContext(Context)
 
   return (
     <>

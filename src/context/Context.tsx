@@ -1,12 +1,12 @@
-import { createContext, useState, type Dispatch, type ReactNode, type SetStateAction } from "react"; 
-import type { FilterType, Root2 } from "../@types"; // YANGI: Root2 ham import qilindi (like uchun film tipi)
+import { createContext, useState, useEffect, type Dispatch, type ReactNode, type SetStateAction } from "react"; 
+import type { FilterType, Root2 } from "../@types";
 
 interface ContextType {
     year: FilterType[];
     setYear: Dispatch<SetStateAction<FilterType[]>>;
-    likes: Root2[]; // YANGI: like qilingan filmlar ro'yxati
-    setLikes: Dispatch<SetStateAction<Root2[]>>; // YANGI: like'larni o'zgartirish funksiyasi
-    toggleLike: (movie: Root2) => void; // YANGI: like bosish/olib tashlash funksiyasi (bitta joyda yozib, hammasi shuni chaqiradi)
+    likes: Root2[]; 
+    setLikes: Dispatch<SetStateAction<Root2[]>>;
+    toggleLike: (movie: Root2) => void;
 }
 
 export const Context = createContext({} as ContextType)
@@ -60,26 +60,29 @@ export const GlobalContext = ({ children }: { children: ReactNode }) => {
         { id: 1, year: 1981 },
         { id: 1, year: 1980 },
     ])
+    const [likes, setLikes] = useState<Root2[]>(() => {
+        try {
+            const saved = localStorage.getItem('liked_movies')
+            return saved ? JSON.parse(saved) : []
+        } catch {
+            return []
+        }
+    })
+    useEffect(() => {
+        localStorage.setItem('liked_movies', JSON.stringify(likes))
+    }, [likes])
 
-    // YANGI: like qilingan filmlar uchun alohida state
-    const [likes, setLikes] = useState<Root2[]>([])
-
-    // YANGI: bitta film like bosilganmi yoki yo'qmi — qo'shadi yoki o'chiradi
     function toggleLike(movie: Root2) {
         setLikes((prev) => {
-            // Avval shu film like ro'yxatida bor-yo'qligini tekshiramiz (id bo'yicha)
             const alreadyLiked = prev.some((item) => item.show.id === movie.show.id)
 
             if (alreadyLiked) {
-                // Agar bor bo'lsa — ro'yxatdan olib tashlaymiz (like bekor qilish)
                 return prev.filter((item) => item.show.id !== movie.show.id)
             } else {
-                // Agar yo'q bo'lsa — ro'yxatga qo'shamiz (like qilish)
                 return [...prev, movie]
             }
         })
     }
 
-    // YANGI: likes, setLikes, toggleLike ham value ichiga qo'shildi
     return <Context.Provider value={{ year, setYear, likes, setLikes, toggleLike }}>{children}</Context.Provider>
 }

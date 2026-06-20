@@ -4,8 +4,8 @@ import axios from 'axios';
 import { FilmImg } from '../../assets/images';
 import type { Root2 } from '../../@types';
 import { PATH } from '../../components';
-import { Calendar, Clock, Heart, Play, Search, Star } from 'lucide-react'; // YANGI: Heart qo'shildi
-import { useContext, useState, useMemo, type ChangeEvent } from 'react'; // useMemo qo'shildi
+import { Calendar, Clock, Heart, Play, Search, Star } from 'lucide-react'; 
+import { useContext, useState, useMemo, type ChangeEvent } from 'react'; 
 import { Context } from '../../context/Context';
 
 export default function SelectMovies() {
@@ -21,39 +21,23 @@ export default function SelectMovies() {
         enabled: !!name
     });
 
-    const { year, likes, toggleLike } = useContext(Context) // YANGI: likes va toggleLike ham olindi
-
-    // TUZATILDI: movies2 o'rniga search va filter uchun alohida state'lar
+    const { year, likes, toggleLike } = useContext(Context) 
     const [searchValue, setSearchValue] = useState<string>('')
     const [selectedYear, setSelectedYear] = useState<string>('')
 
-    // TUZATILDI: movies o'zgarsa ham, search va filter ishlaydi (useMemo bilan)
     const filteredMovies = useMemo(() => {
         if (!movies) return []
 
         return movies.filter((item: Root2) => {
-            // Search filter - nom bo'yicha qidirish
-            const matchesSearch = item.show.name
-                .toLowerCase()
-                .includes(searchValue.toLowerCase())
-
-            // Yil filter - premiered sanasidan yil olinadi
-            // TUZATILDI: String(selectedYear) — numberni stringga o'giradi
-            const matchesYear = selectedYear === '' || selectedYear === 'Hammasi'
-                ? true
-                : item.show.premiered?.startsWith(String(selectedYear))
-
-            // TUZATILDI: ikkalasi ham mos kelsa ko'rsatiladi
+            const matchesSearch = item.show.name.toLowerCase().includes(searchValue.toLowerCase())
+            const matchesYear = selectedYear === '' || selectedYear === 'Hammasi' ? true : item.show.premiered?.startsWith(String(selectedYear))
             return matchesSearch && matchesYear
         })
-    }, [movies, searchValue, selectedYear]) // movies, search yoki yil o'zgarganda qayta hisoblaydi
+    }, [movies, searchValue, selectedYear])
 
-    // TUZATILDI: to'g'ridan-to'g'ri state'ni yangilaydi
     function handleSearch(e: ChangeEvent<HTMLInputElement>) {
         setSearchValue(e.target.value)
     }
-
-    // TUZATILDI: yil tanlanganda filter ishlaydi
     function handleYearFilter(e: ChangeEvent<HTMLSelectElement>) {
         setSelectedYear(e.target.value)
     }
@@ -65,31 +49,18 @@ export default function SelectMovies() {
             <div className="w-300 mx-auto mb-5">
                 <span className='flex items-start'>
                     <p onClick={() => navigate(PATH.movies)} className='cursor-pointer text-[14px] duration-300 hover:text-amber-400'>Kinolar</p>/
-                    <span></span>
+                    <span onClick={() => navigate(`${PATH.movies}/${name}`)} className='cursor-pointer text-[14px] duration-300 hover:text-amber-400' >{name}</span>
                 </span>
             </div>
             <div className="max-w-7xl mx-auto mb-12 flex gap-4 justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/10 backdrop-blur-md">
                 <div className="relative w-full md:w-96">
-                    {/* TUZATILDI: value va onChange to'g'ri ulandi */}
-                    <input
-                        value={searchValue}
-                        onChange={handleSearch}
-                        type="text"
-                        placeholder="Kinolarni qidirish..."
-                        className="w-full bg-[#121214] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-400 transition"
-                    />
+                    <input value={searchValue} onChange={handleSearch} type="text" placeholder="Kinolarni qidirish..." className="w-full bg-[#121214] border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-amber-400 transition"/>
                     <Search className="absolute left-4 top-3.5 text-gray-500 w-4 h-4" />
                 </div>
                 <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    {/* TUZATILDI: onChange qo'shildi, yil filter endi ishlaydi */}
-                    <select
-                        value={selectedYear}
-                        onChange={handleYearFilter}
-                        className="bg-[#121214] border border-white/10 rounded-xl py-2.5 px-4 text-[14px] text-gray-300 focus:outline-none focus:border-amber-400 cursor-pointer"
-                    >
+                    <select value={selectedYear} onChange={handleYearFilter} className="bg-[#121214] border border-white/10 rounded-xl py-2.5 px-4 text-[14px] text-gray-300 focus:outline-none focus:border-amber-400 cursor-pointer">
                         <option value="">Yil: Hammasi</option>
                         {year.map(item => (
-                            // TUZATILDI: key va value qo'shildi
                             <option key={item.year} value={String(item.year)}>{item.year}</option>
                         ))}
                     </select>
@@ -100,7 +71,6 @@ export default function SelectMovies() {
                     <span className="w-1.5 h-6 bg-amber-400 rounded-full" />Barcha Kinolar
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {/* TUZATILDI: movies2 o'rniga filteredMovies ishlatildi */}
                     {filteredMovies?.map((movie: Root2) => (
                         <div key={movie.show?.id} onClick={() => navigate(`${PATH.movies}/${encodeURIComponent(movie.show.name)}`)} className="cursor-pointer group relative bg-[#121214] border border-white/5 rounded-2xl overflow-hidden transition-all duration-300 hover:border-amber-400/50 hover:shadow-2xl hover:shadow-amber-400/5 flex flex-col justify-between" >
                             <div className="relative w-full h-90 overflow-hidden">
