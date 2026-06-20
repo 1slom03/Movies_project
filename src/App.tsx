@@ -1,4 +1,3 @@
-import { Context } from "./context/Context"
 import { UserRoute } from "./routes"
 
 const App = () => {
